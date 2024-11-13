@@ -1,0 +1,596 @@
+Data_Set #1
+
+1.	Issue: My device can't connect to the internet.
+Checking network status helps verify if the device is physically connected to any network and if the interface is active. Network issues can arise if the interface is down or if the device is disconnected.
+Solution: Check network connection status and whether the device is connected to a network.
+Command: nmcli device status
+
+2.	Test Internet Connectivity
+Issue: I am connected to Wi-Fi, but I can't access the internet.
+Testing connectivity to a public DNS server helps determine if the device can reach the internet. A failed ping to a DNS server like Google’s (8.8.8.8) often indicates issues beyond local Wi-Fi, possibly with the ISP.
+Solution: Ping a public DNS server to test internet connectivity.
+Command: ping -c 4 8.8.8.8
+
+3.	Diagnose DNS Issues
+Issue: Websites are not loading, but I can ping IP addresses.
+DNS translates domain names to IP addresses. If DNS fails, you may access sites via IP but not by name. Flushing DNS or switching to another DNS server can solve resolution problems caused by cache or server issues.
+Solution: Clear the DNS cache or use an alternative DNS server.
+Command: To clear DNS cache-
+sudo systemd-resolve --flush-caches (Linux)
+Command: to set new DNS-
+nmcli con mod <connection_name> ipv4.dns "8.8.8.8 8.8.4.4"
+
+4.	Check Local IP Configuration
+Issue: I can't access other devices on my local network.
+Checking IP configurations helps ensure your device has the correct IP, subnet mask, and gateway needed to communicate on the local network. Incorrect IP settings can prevent access to other devices or the internet.
+Solution: Verify local IP configuration.
+Command: ip addr show
+
+5.	Restart Network Services
+Issue: Network is unresponsive or frequently disconnects.
+Restarting the network manager clears and reinitializes network configurations, which can resolve temporary issues with connectivity or frequent disconnections due to misconfigured settings.
+Solution: Restart the network manager.
+Command: sudo systemctl restart NetworkManager
+
+6.	Identify Open Ports
+Issue: I need to see which ports are open on my device.
+Open ports indicate services listening on your device, and checking them can help diagnose security issues or misconfigured services that could impact network communication.
+Solution: Use netstat to list open ports.
+Command: sudo netstat -tuln
+
+7.	Troubleshoot Router Connectivity
+Issue: I can't connect to the router's admin page.
+The router is the gateway for devices on the network. Pinging the router checks if your device can communicate with it. If not, it may indicate an IP, signal, or router-specific issue.
+Solution: Ping the router’s gateway IP to check connectivity.
+Command: ping -c 4 <router_gateway_IP>
+
+8.	Release and Renew IP Address
+Issue: I am not getting an IP address from the router.
+Sometimes, the DHCP server fails to assign an IP, leading to no or invalid IP addresses. Releasing and renewing prompts DHCP to assign a new IP, resolving connection issues related to IP leasing.
+Solution: Release and renew the IP.
+Command: sudo dhclient -r 
+      sudo dhclient
+
+9.	Check for Packet loss
+Issue: I experience lag or connectivity drops during online activities.
+Packet loss indicates disruptions in data flow. This can result in lag, delays, or dropped connections. Checking packet loss helps identify issues on the route to the destination, often due to network congestion or poor connectivity.
+Solution: Use ping to check for packet loss.
+Command: ping -c 10 <destination_IP_or_URL>
+
+10.	Check Network Interface Status
+Issue: The network interface is down.
+If an interface is down, the device can’t use it for network communication. Bringing it up activates the network adapter, allowing it to function in sending and receiving data.
+Solution:  Bring up the network interface.
+Command: sudo ifconfig <interface_name> up
+
+11.	Check System Logs for Network Errors
+Issue: I need more information on network errors or disconnections.
+Logs provide detailed information about network errors and events that may help identify misconfigurations, hardware issues, or connectivity errors.
+Solution: View system logs related to network services.
+Command: sudo journalctl -u NetworkManager
+
+12.	Detect Slow Network Speed
+Issue: My internet connection feels slow.
+Measuring network speed verifies if it matches expected speeds. Slow speeds may indicate issues with the ISP, network congestion, or misconfigured equipment.
+Solution: Measure network speed by downloading a file or using speedtest-cli.
+Command (if speedtest-cli is installed): speedtest-cli
+
+13.	Identify Network Traffic and Bandwidth Usage
+Issue: I want to know which applications are using the most bandwidth.
+High bandwidth usage by certain apps can slow down network speeds for other services. Monitoring tools help identify high-usage applications, which can be managed or restricted to improve performance.
+Solution: Use nload or iftop to monitor network traffic.
+Command: sudo iftop
+
+14.	Verify Ethernet Cable Connection
+Issue: Ethernet connection is not detected.
+Ethernet cables can have physical faults that disrupt connectivity. Checking the status with a tool like ethtool verifies cable integrity and connection status, helping identify hardware problems.
+Solution: Check the status of the Ethernet cable and connection interface.
+Command: sudo ethtool <interface_name>
+
+15.	Flush ARP Cache
+Issue: I have connectivity issues with a specific device on the network.
+The ARP cache stores IP-to-MAC address mappings. Clearing it helps resolve issues related to outdated or conflicting address mappings, which can block access to certain devices.
+Solution: Clear the ARP cache to resolve IP conflicts.
+Command: sudo ip -s -s neigh flush all
+
+16.	Check for Duplicate IP Addresses
+Issue: I suspect there is an IP conflict on the network.
+Duplicate IPs cause conflicts, preventing devices from connecting properly. Checking for duplicates helps identify conflicts, allowing you to reconfigure addresses to prevent connectivity issues.
+Solution: Check for duplicate IP addresses in the network.
+Command: sudo arping -D -I <interface> <IP_address>
+
+17.	Restart a Specific Network Interface
+Issue: One of my network interfaces isn't responding.
+If a specific interface is unresponsive, restarting it reinitializes its configuration, often resolving issues related to temporary malfunctions or IP assignment errors.
+Solution: Restart the specific network interface.
+Command: sudo ifdown <interface_name> && sudo ifup <interface_name>
+
+18.	Diagnose DHCP Issues
+Issue: I am not getting an IP address from the DHCP server.
+DHCP assigns IP addresses to devices. Restarting the DHCP client can help re-establish communication with the DHCP server, ensuring a correct IP configuration if the client failed initially.
+Solution: Restart the DHCP client.
+Command: sudo dhclient -v <interface_name>
+
+19.	Traceroute to Identify Network Hops and Delays
+Issue: I want to locate where delays are occurring in the network.
+Traceroute tracks the path of packets to a destination. It reveals points of delay, which can help diagnose slow or unstable connections by pinpointing network congestion or ISP issues.
+Solution: Use traceroute to find network latency points.
+Command: traceroute <destination_IP_or_URL>
+
+20.	List All Network Connections
+Issue: I need to see a list of all current network connections and their states.
+Listing connections shows active connections and their states, helping diagnose potential unauthorized connections or understand what’s using the network.
+Solution: Use ss to list socket statistics.
+Command: ss -tunap
+
+21.	Diagnose DNS Resolution Issues
+Issue: DNS resolution is slow or failing.
+DNS resolution issues are common in slow-loading sites. Testing with an alternative DNS server helps determine if the issue is with the default DNS server or another part of the connection.
+Solution: Test with an alternate DNS server to verify if the issue is with the DNS.
+Command: dig google.com @8.8.8.8
+
+22.	Reset Network Settings
+Issue: Network settings might be corrupted.
+Network settings can become corrupted due to misconfigurations or software updates. Resetting them to defaults helps clear errors and reverts configurations to a known working state.
+Solution: Reset network configurations to default.
+Command: sudo systemctl restart networking
+
+23.	Check Wireless Signal Strength
+Issue:  My Wi-Fi signal is weak.
+Weak Wi-Fi signals often cause slow speeds or disconnects. Checking signal strength can help determine if the issue is due to interference, distance from the router, or physical obstructions.
+Solution:  Check Wi-Fi signal strength to troubleshoot signal issues.
+Command: iwconfig <interface_name> 
+
+24.	View Routing Table
+Issue: I need to verify if routing rules are correctly configured.
+Routing tables determine how packets are directed on a network. Checking them helps verify if routes to destinations are correctly configured, which is crucial for network access.
+Solution: Display the routing table.
+Command: route -n
+
+25.	Test with Alternate Network Interface
+Issue: Wireless connection is unstable, I want to test with Ethernet.
+Switching interfaces (e.g., from Wi-Fi to Ethernet) can help isolate issues. If Ethernet works but Wi-Fi doesn’t, it indicates a Wi-Fi-specific issue like signal interference or misconfiguration.
+Solution: Temporarily disable the Wi-Fi interface and enable Ethernet.
+Command:  sudo ifconfig <wifi_interface_name> down && sudo ifconfig <ethernet_interface_name> up
+
+
+Q & A #1
+
+  Basic Connectivity and Interface Issues
+
+1.  Q: How do I check the network connection status of my device? 
+   -  A:  Use `nmcli` to view the connection status and ensure your device is connected.
+   -  Command:  `nmcli device status`
+
+2.  Q: How can I verify my internet connectivity using a public server? 
+   -  A:  Ping a public DNS server to test connectivity.
+   -  Command:  `ping -c 4 8.8.8.8`
+
+3.  Q: What should I do if websites aren’t loading by name but are by IP? 
+   -  A:  This could be a DNS issue; try clearing the DNS cache.
+   -  Command:  `sudo systemd-resolve --flush-caches`
+
+4.  Q: How can I view my local IP configuration? 
+   -  A:  Use `ip` to display your IP, subnet mask, and gateway settings.
+   -  Command:  `ip addr show`
+
+5.  Q: What’s the command to restart network services if they’re unresponsive? 
+   -  A:  Restart the network manager to refresh connections.
+   -  Command:  `sudo systemctl restart NetworkManager`
+
+6.  Q: How do I list all open ports on my device? 
+   -  A:  `netstat` shows active open ports, helpful for diagnostics.
+   -  Command:  `sudo netstat -tuln`
+
+  Router and IP Issues
+
+7.  Q: How can I check if my device is connected to the router? 
+   -  A:  Ping the router’s IP address to confirm connectivity.
+   -  Command:  `ping -c 4 <router_gateway_IP>`
+
+8.  Q: I’m not getting an IP from the router. How can I fix this? 
+   -  A:  Release and renew the IP with DHCP.
+   -  Command:  `sudo dhclient -r && sudo dhclient`
+
+9.  Q: How do I test for packet loss if I’m experiencing lag? 
+   -  A:  Ping a destination multiple times to check for packet loss.
+   -  Command:  `ping -c 10 <destination_IP_or_URL>`
+
+10.  Q: My network interface is down. How can I bring it back up? 
+    -  A:  Use `ifconfig` to activate the network interface.
+    -  Command:  `sudo ifconfig <interface_name> up`
+
+11.  Q: How can I check network logs for more details on disconnections? 
+    -  A:  Use `journalctl` to view logs related to network events.
+    -  Command:  `sudo journalctl -u NetworkManager`
+
+  Speed and Performance Issues
+
+12.  Q: What can I do if my internet speed feels slower than usual? 
+    -  A:  Test your network speed to compare with expected results.
+    -  Command:  `speedtest-cli`
+
+13.  Q: How can I see which applications are using the most bandwidth? 
+    -  A:  Use `iftop` or `nload` for monitoring network traffic.
+    -  Command:  `sudo iftop`
+
+14.  Q: What if my Ethernet connection isn’t detected? 
+    -  A:  Check the status of the Ethernet cable connection.
+    -  Command:  `sudo ethtool <interface_name>`
+
+15.  Q: How can I flush the ARP cache to resolve IP conflicts? 
+    -  A:  Clear the ARP cache to remove old IP-to-MAC mappings.
+    -  Command:  `sudo ip -s -s neigh flush all`
+
+16.  Q: How do I check if there’s an IP conflict on my network? 
+    -  A:  Use `arping` to detect duplicate IP addresses.
+    -  Command:  `sudo arping -D -I <interface> <IP_address>`
+
+17.  Q: How can I restart a specific network interface? 
+    -  A:  `ifdown` and `ifup` commands reinitialize an interface.
+    -  Command:  `sudo ifdown <interface_name> && sudo ifup <interface_name>`
+
+18.  Q: What’s the best way to troubleshoot DHCP issues? 
+    -  A:  Restart the DHCP client on your device.
+    -  Command:  `sudo dhclient -v <interface_name>`
+
+  Advanced Diagnostics
+
+19.  Q: How can I identify where delays are occurring in the network? 
+    -  A:  Use `traceroute` to map the packet path and locate delays.
+    -  Command:  `traceroute <destination_IP_or_URL>`
+
+20.  Q: How can I list all active network connections on my device? 
+    -  A:  Use `ss` to view all connections and their states.
+    -  Command:  `ss -tunap`
+
+21.  Q: What should I do if DNS resolution is slow? 
+    -  A:  Test with an alternate DNS server like Google’s DNS.
+    -  Command:  `dig google.com @8.8.8.8`
+
+22.  Q: How do I reset network settings to their defaults? 
+    -  A:  Resetting clears configurations and resolves persistent issues.
+    -  Command:  `sudo systemctl restart networking`
+
+23.  Q: How can I check my Wi-Fi signal strength? 
+    -  A:  Use `iwconfig` to view the signal strength and troubleshoot weak connections.
+    -  Command:  `iwconfig <interface_name>`
+
+24.  Q: How do I display my device’s routing table? 
+    -  A:  The routing table shows configured routes for data packets.
+    -  Command:  `route -n`
+
+25.  Q: Can I test connectivity by switching from Wi-Fi to Ethernet? 
+    -  A:  Disable Wi-Fi and enable Ethernet to isolate issues.
+    -  Command:  `sudo ifconfig <wifi_interface_name> down && sudo ifconfig <ethernet_interface_name> up`
+
+  Additional Troubleshooting Commands
+
+26.  Q: How can I scan for nearby Wi-Fi networks? 
+    -  A:  Use `nmcli` to list available Wi-Fi networks.
+    -  Command:  `nmcli device wifi list`
+
+27.  Q: How can I configure a static IP address? 
+    -  A:  Use `nmcli` to set a static IP for your connection.
+    -  Command:  `nmcli con mod <connection_name> ipv4.addresses <IP_address> ipv4.gateway <gateway> ipv4.method manual`
+
+28.  Q: How do I restart Wi-Fi without affecting other services? 
+    -  A:  Restart the Wi-Fi interface specifically.
+    -  Command:  `sudo ifconfig <wifi_interface_name> down && sudo ifconfig <wifi_interface_name> up`
+
+29.  Q: How do I troubleshoot firewall-related connectivity issues? 
+    -  A:  Use `ufw` to check and adjust firewall settings.
+    -  Command:  `sudo ufw status`
+
+30.  Q: How can I check the IPv6 configuration on my device? 
+    -  A:  Use `ip` to display IPv6 configurations.
+    -  Command:  `ip -6 addr show`
+
+31.  Q: How can I enable IPv6 if it’s disabled? 
+    -  A:  Use `sysctl` to enable IPv6.
+    -  Command:  `sudo sysctl -w net.ipv6.conf.all.disable_ipv6=0`
+
+32.  Q: How do I view ARP table entries? 
+    -  A:  Use `arp` to view IP-to-MAC address mappings on your network.
+    -  Command:  `arp -a`
+
+33.  Q: How do I release and renew an IP with ifconfig? 
+    -  A:  Use `ifconfig` commands to release and renew IPs.
+    -  Command:  `sudo ifconfig <interface_name> down && sudo ifconfig <interface_name> up`
+
+34.  Q: How do I install `speedtest-cli` if it’s not available? 
+    -  A:  Use `apt` to install it on Debian-based systems.
+    -  Command:  `sudo apt install speedtest-cli`
+
+35.  Q: How can I monitor network throughput in real-time? 
+    -  A:  Use `iftop` to view real-time network traffic.
+    -  Command:  `sudo iftop`
+
+36.  Q: How do I restart the DHCP service on a server? 
+    -  A:  Restart the DHCP service to resolve IP assignment issues.
+    -  Command:  `sudo systemctl restart isc-dhcp-server`
+
+37.  Q: How can I disable a network interface temporarily? 
+    -  A:  Use `ip` to take down an interface temporarily.
+    -  Command:  `sudo ip link set <interface_name> down`
+
+38.  Q: How do I list network adapters on my device? 
+    -  A:  Use `ifconfig` or `ip` to list all adapters.
+    -  Command:  `ip link show`
+
+39.  Q: How can I check the MAC address of an interface? 
+    -  A:  Use `ip` or `ifconfig` to display MAC addresses.
+    -  Command:  `ip link show <interface_name>`
+
+40.  Q: How do I trace DNS queries to troubleshoot slow DNS? 
+    -  A:  Use `dig` to see query responses and timings.
+    -  Command:  `dig google.com`
+
+
+Q & A #2
+
+Q1:   Why can’t I connect to the network?   
+ A1:  Check if the interface is up:
+   ```
+   ifconfig
+   ```
+   Try restarting the network manager:
+   ```
+   sudo systemctl restart NetworkManager
+   ```
+
+ Q2:   What should I do if my internet connection is slow?   
+ A2:  Run a speed test:
+   ```
+   curl -s https://raw.githubusercontent.com/sivel/speedtest-cli/master/speedtest.py | python -
+   ```
+   Close bandwidth-heavy apps and restart your router if results are lower than expected.
+
+ Q3:   Why am I getting a "No Internet" error?   
+ A3:  Check connectivity to your router and a public DNS server:
+   ```
+   ping -c 4 192.168.1.1
+   ping -c 4 8.8.8.8
+   ```
+
+ Q4:   How do I fix an IP address conflict?   
+ A4:  Release and renew IP address:
+   ```
+   sudo dhclient -r
+   sudo dhclient
+   ```
+
+ Q5:   Why can’t I access certain websites?   
+ A5:  Clear DNS cache:
+   ```
+   sudo systemd-resolve --flush-caches
+   ```
+   Or use a different DNS:
+   ```
+   echo "nameserver 8.8.8.8" | sudo tee /etc/resolv.conf > /dev/null
+   ```
+
+ Q6:   How do I resolve a DNS issue?   
+ A6:  Flush the DNS cache:
+   ```
+   sudo systemd-resolve --flush-caches
+   ```
+
+ Q7:   Why does my Wi-Fi keep disconnecting?   
+ A7:  Restart the network interface:
+   ```
+   sudo ifconfig wlan0 down
+   sudo ifconfig wlan0 up
+   ```
+
+ Q8:   What can I do if I’m experiencing high latency?   
+ A8:  Ping a stable server to check latency:
+   ```
+   ping google.com
+   ```
+
+ Q9:   Why is my network connection dropping at regular intervals?   
+ A9:  Check for processes using too much bandwidth:
+   ```
+   sudo iftop
+   ```
+
+ Q10:   How do I reset my router?   
+ A10:  Use a physical button on the router or enter the router’s IP in a browser to access settings.
+
+ Q11:   Why can’t I connect to the VPN?   
+ A11:  Restart VPN service:
+   ```
+   sudo systemctl restart openvpn
+   ```
+
+ Q12:   Why am I getting a “Network Unreachable” error?   
+ A12:  Check your IP configuration:
+   ```
+   ifconfig
+   ```
+
+ Q13:   What should I do if my device can’t get an IP address?   
+ A13:  Restart the DHCP client:
+   ```
+   sudo dhclient
+   ```
+
+ Q14:   Why does my network say “Limited Connectivity”?   
+ A14:  Release and renew the IP lease:
+   ```
+   sudo dhclient -r; sudo dhclient
+   ```
+
+ Q15:   How do I fix “Destination Host Unreachable”?   
+ A15:  Check the routing table:
+   ```
+   route -n
+   ```
+
+ Q16:   Why does my network keep switching between Wi-Fi and cellular?   
+ A16:  Disable automatic switching or prioritize Wi-Fi.
+
+ Q17:   How do I resolve a “Network cable unplugged” error?   
+ A17:  Check cable connection, try a different cable.
+
+ Q18:   What should I do if my router isn’t broadcasting Wi-Fi?   
+ A18:  Check router settings for wireless broadcasting.
+
+ Q19:   Why can’t I access the router settings page?   
+ A19:  Ping the router IP:
+   ```
+   ping 192.168.1.1
+   ```
+
+ Q20:   How do I fix intermittent VPN disconnections?   
+ A20:  Restart the VPN client or try a different server.
+
+ Q21:   Why am I getting frequent “Page Not Found” errors?   
+ A21:  Clear DNS cache and restart the network:
+   ```
+   sudo systemd-resolve --flush-caches
+   sudo systemctl restart NetworkManager
+   ```
+
+ Q22:   How do I resolve a firewall blocking my network?   
+ A22:  Check firewall status:
+   ```
+   sudo ufw status
+   ```
+
+ Q23:   What can I do if my mobile hotspot isn’t working?   
+ A23:  Restart network interfaces:
+   ```
+   sudo ifconfig wlan0 down; sudo ifconfig wlan0 up
+   ```
+
+ Q24:   Why can’t I connect to public Wi-Fi?   
+ A24:  Accept the login terms on the splash page, if required.
+
+ Q25:   How do I fix Wi-Fi showing “Connected, No Internet”?   
+ A25:  Ping a public DNS server:
+   ```
+   ping 8.8.8.8
+   ```
+
+ Q26:   How can I improve my Wi-Fi signal strength?   
+ A26:  Place your router centrally and avoid interference sources.
+
+ Q27:   Why is my Wi-Fi not showing up on my device?   
+ A27:  Restart network manager:
+   ```
+   sudo systemctl restart NetworkManager
+   ```
+
+ Q28:   How do I fix a “Network Timeout” error?   
+ A28:  Clear the DNS cache:
+   ```
+   sudo systemd-resolve --flush-caches
+   ```
+
+ Q29:   Why does my network show “Connected” but is unresponsive?   
+ A29:  Restart network manager:
+   ```
+   sudo systemctl restart NetworkManager
+   ```
+
+ Q30:   How do I update my router’s firmware?   
+ A30:  Access router settings via the router IP address in a browser.
+
+ Q31:   Why am I getting a “Server Not Found” error?   
+ A31:  Verify the DNS server:
+   ```
+   cat /etc/resolv.conf
+   ```
+
+ Q32:   How do I reset my network settings on my device?   
+ A32:  Restart network services:
+   ```
+   sudo systemctl restart NetworkManager
+   ```
+
+ Q33:   What should I do if my network is overloaded?   
+ A33:  Identify high-bandwidth processes:
+   ```
+   sudo iftop
+   ```
+
+ Q34:   How do I fix “Proxy Server Refused Connection”?   
+ A34:  Verify proxy settings in `/etc/environment`.
+
+ Q35:   Why am I getting “This site can’t be reached” error?   
+ A35:  Restart network services and clear DNS:
+   ```
+   sudo systemctl restart NetworkManager
+   sudo systemd-resolve --flush-caches
+   ```
+
+ Q36:   How can I test if my router is working properly?   
+ A36:  Ping router and check for responses:
+   ```
+   ping 192.168.1.1
+   ```
+
+ Q37:   Why is my device’s network adapter not working?   
+ A37:  Restart network adapter:
+   ```
+   sudo ifconfig eth0 down; sudo ifconfig eth0 up
+   ```
+
+ Q38:   How do I fix a “Network Access Denied” error?   
+ A38:  Check firewall rules:
+   ```
+   sudo ufw status
+   ```
+
+ Q39:   How do I troubleshoot a Wi-Fi authentication error?   
+ A39:  Re-enter the Wi-Fi password, and check security settings in router.
+
+ Q40:   Why can’t my device find any networks?   
+ A40:  Restart NetworkManager:
+   ```
+   sudo systemctl restart NetworkManager
+   ```
+
+ Q41:   How do I change my network’s DNS server?   
+ A41:  Edit `/etc/resolv.conf`:
+   ```
+   echo "nameserver 8.8.8.8" | sudo tee /etc/resolv.conf > /dev/null
+   ```
+
+ Q42:   How do I fix a “Cannot Connect to Server” error?   
+ A42:  Verify the server is reachable:
+   ```
+   ping <server-ip>
+   ```
+
+ Q43:   Why am I getting “Wi-Fi doesn’t have a valid IP configuration”?   
+ A43:  Release and renew IP:
+   ```
+   sudo dhclient -r; sudo dhclient
+   ```
+
+ Q44:   How do I reconnect to a hidden SSID?   
+ A44:  Add network manually in Wi-Fi settings.
+
+ Q45:   Why can’t my device connect to 5GHz Wi-Fi?   
+ A45:  Verify device compatibility with 5GHz networks.
+
+ Q46:   How do I fix “ERR_CONNECTION_REFUSED”?   
+ A46:  Clear DNS and browser cache:
+   ```
+   sudo systemd-resolve --flush-caches
+   ```
+
+ Q47:   Why is my device connecting to the wrong Wi-Fi network?   
+ A47:  Prioritize your preferred network in settings.
+
+ Q48:   How do I disable a network adapter in Linux?   
+ A48:  Disable with:
+   ```
+   sudo ifconfig <interface> down
+   ```
+
+ Q49:   Why can’t I access shared folders on the network?   
+ A49:  Ensure
